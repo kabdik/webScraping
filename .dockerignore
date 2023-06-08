@@ -1,0 +1,19 @@
+Dockerfile
+docker-compose.yml 
+.dockerignore
+
+node_modules
+yarn-error.log
+dist
+
+.vscode
+
+.git
+.gitlab-ci.yml
+
+ansible
+
+
+
+# adminjs
+.adminjs

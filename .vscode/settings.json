@@ -1,0 +1,29 @@
+{
+    "[javascript]": {
+        "editor.formatOnSave": false,
+        "editor.defaultFormatter": "esbenp.prettier-vscode",
+        "editor.codeActionsOnSave": {
+            "source.fixAll.eslint": true
+        }
+    },
+    "[typescript]": {
+        "editor.formatOnSave": false,
+        "editor.defaultFormatter": "esbenp.prettier-vscode",
+        "editor.codeActionsOnSave": {
+            "source.fixAll.eslint": true
+        }
+    },
+    "sqltools.connections": [
+        {
+            "previewLimit": 50,
+            "server": "localhost",
+            "port": 5432,
+            "driver": "PostgreSQL",
+            "name": "nutrix",
+            "database": "nutrix",
+            "username": "postgres",
+            "password": ""
+        }
+    ],
+    "typescript.tsdk": "node_modules\\typescript\\lib"
+}

@@ -1,0 +1,28 @@
+- hosts: all
+  vars:
+    deploy_folder: /home/techbridge/scaneat/scaneat
+
+  tasks:
+    - name: Copy files to the server
+      synchronize:
+        src: ../../../
+        dest: '{{ deploy_folder }}'
+        rsync_opts:
+          - '--no-motd'
+          - '--exclude=.git'
+          - '--delete'
+
+    - name: Run docker compose build
+      shell: docker-compose build
+      args:
+        chdir: '{{ deploy_folder }}'
+
+    - name: Run docker compose build
+      shell: docker-compose build
+      args:
+        chdir: '{{ deploy_folder }}'
+
+    - name: Run docker compose up
+      shell: docker-compose up -d
+      args:
+        chdir: '{{ deploy_folder }}'

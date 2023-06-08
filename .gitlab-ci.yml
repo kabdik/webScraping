@@ -1,0 +1,73 @@
+stages:
+  - deploy
+
+before_script:
+  - ansible --version
+  - mkdir secret
+  - echo "$ANSIBLE_SSH_KEY" > secret/ansible.key ## import ansible ssh key
+  - chmod 400 secret/ansible.key
+  - export ANSIBLE_HOST_KEY_CHECKING=False
+
+deploy:deploy_dev: 
+  stage: deploy
+  resource_group: deploy_dev
+  only: 
+    refs:
+      - development
+    changes: 
+      - src/**/*
+      - ansible/**/*
+      - Dockerfile
+      - package.json
+      - yarn.lock
+      - .gitlab-ci.yml
+      - docker-compose.yml
+  script: 
+    - cat $APP_ENV_FILE_DEV > .env
+    - ansible-playbook -i $DEV_INVENTORY --private-key secret/ansible.key ./ansible/playbooks/deploy.yml 
+  
+deploy:migration_dev:
+  stage: deploy
+  only: 
+    refs:
+      - development
+    changes: 
+      - src/db/typeorm-migrations/*
+      - .gitlab-ci.yml
+      - ansible/playbooks/migrate.yml
+  script: 
+    - ansible-playbook -i $DEV_INVENTORY --private-key secret/ansible.key ./ansible/playbooks/migrate.yml 
+  needs:
+    - deploy:deploy_dev
+
+deploy:deploy_prod: 
+  stage: deploy
+  resource_group: deploy_prod
+  only: 
+    refs:
+      - master
+    changes: 
+      - src/**/*
+      - ansible/**/*
+      - Dockerfile
+      - package.json
+      - yarn.lock
+      - .gitlab-ci.yml
+      - docker-compose.yml
+  script: 
+    - cat $APP_ENV_FILE_PROD > .env
+    - ansible-playbook -i $PROD_INVENTORY --private-key secret/ansible.key ./ansible/playbooks/deploy.yml 
+  
+deploy:migration_prod:
+  stage: deploy
+  only: 
+    refs:
+      - master
+    changes: 
+      - src/db/typeorm-migrations/*
+      - .gitlab-ci.yml
+      - ansible/playbooks/migrate.yml
+  script: 
+    - ansible-playbook -i $PROD_INVENTORY --private-key secret/ansible.key ./ansible/playbooks/migrate.yml 
+  needs:
+    - deploy:deploy_prod
